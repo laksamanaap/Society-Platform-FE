@@ -4,8 +4,8 @@ const Footer = () => {
   return (
     // <!-- S: Footer -->
     <footer>
-      <div class="container">
-        <div class="text-center py-4 text-muted">
+      <div className="container">
+        <div className="text-center py-4 text-muted">
           Copyright &copy; 2023 - Web Tech ID
         </div>
       </div>

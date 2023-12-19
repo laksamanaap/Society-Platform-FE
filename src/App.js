@@ -1,5 +1,10 @@
-import React, { Fragment } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { Fragment, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useParams,
+} from "react-router-dom";
 import "./assets/css/bootstrap.css";
 import "./assets/css/custom.css";
 import Navbar from "./component/layout/Navbar";
@@ -13,8 +18,8 @@ import Login from "./component/pages/Login";
 function App() {
   return (
     <>
-      <Navbar />
       <Router>
+        <Navbar />
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Dashboard />} />
@@ -22,8 +27,8 @@ function App() {
           <Route path="/job_vacancies" element={<JobVacancies />} />
           <Route path="/job_vacancies/show" element={<JobVacanciesDetail />} />
         </Routes>
+        <Footer />
       </Router>
-      <Footer />
     </>
   );
 }
