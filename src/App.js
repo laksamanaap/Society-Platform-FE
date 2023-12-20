@@ -25,7 +25,10 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/data_validation" element={<RequestValidation />} />
           <Route path="/job_vacancies" element={<JobVacancies />} />
-          <Route path="/job_vacancies/show" element={<JobVacanciesDetail />} />
+          <Route
+            path="/job_vacancies/show/:id"
+            element={<JobVacanciesDetail />}
+          />
         </Routes>
         <Footer />
       </Router>

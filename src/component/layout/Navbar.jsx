@@ -50,7 +50,7 @@ const Navbar = () => {
           setSocietyName(null);
           navigate("/login");
         } else {
-          console.error("Logout failed:", response.statusText);
+          console.error("Logout failed:", response);
         }
       }
     } catch (error) {
@@ -61,7 +61,7 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
       <div className="container">
-        <a className="navbar-brand" href="#">
+        <a className="navbar-brand" href="/">
           Job Seekers Platform
         </a>
         <button

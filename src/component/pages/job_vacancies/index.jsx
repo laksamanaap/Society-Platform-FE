@@ -1,12 +1,72 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const index = () => {
+const Index = () => {
+  const [vacanciesData, setVacanciesData] = useState([]);
+  const [societiesData, setSociestiesData] = useState([]);
+  // const [hasApplied, setHasApplied] = useState(false);
+
+  const token = localStorage.getItem("token");
+  useEffect(() => {
+    // if (!token) {
+    //   navigate("/login");
+    //   return;
+    // }
+    const fetchData = async () => {
+      try {
+        // Fetch applying data
+        const applyingResponse = await axios.get(
+          "http://127.0.0.1:8000/api/v1/job_vacancies",
+          {
+            params: {
+              token: `${token}`,
+            },
+          }
+        );
+
+        const vacanciesDataArray = applyingResponse?.data?.vacancies;
+        setVacanciesData(vacanciesDataArray);
+        console.log(vacanciesDataArray);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    const fetchSocietiesData = async () => {
+      try {
+        const societiesResponse = await axios.get(
+          "http://127.0.0.1:8000/api/v1/applications",
+          {
+            params: {
+              token: `${token}`,
+            },
+          }
+        );
+
+        const societiesResponseData = societiesResponse?.data?.vacancies;
+        setSociestiesData(societiesResponseData);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchSocietiesData();
+    fetchData();
+  }, []);
+
+  console.log("Vacancies Data : ", vacanciesData);
+  console.log("Societies Data : ", societiesData);
+
+  const society_id = societiesData[0]?.society_id;
+  console.log(society_id);
+
   return (
     <div>
       <main>
         <header class="jumbotron">
           <div class="container">
-            <h1 class="display-4">Job Vacancies</h1>
+            <h1 class="display-4">Job Vacancies </h1>
           </div>
         </header>
 
@@ -18,134 +78,55 @@ const index = () => {
           </div>
 
           <div class="section-body">
-            <article class="spot">
-              <div class="row">
-                <div class="col-5">
-                  <h5 class="text-primary">PT. Maju Mundur Sejahtera</h5>
-                  <span class="text-muted">
-                    Ds. Abdullah No. 31, DKI Jakarta
-                  </span>
-                </div>
-                <div class="col-4">
-                  <h5>Available Position (Capacity)</h5>
-                  <span class="text-muted">
-                    Desain Grafis (3), Programmer (1), Manager (1)
-                  </span>
-                </div>
-                <div class="col-3">
-                  <button class="btn btn-danger btn-lg btn-block">
-                    Detail / Apply
-                  </button>
-                </div>
-              </div>
-            </article>
-
-            <article class="spot unavailable">
-              <div class="row">
-                <div class="col-5">
-                  <h5 class="text-primary">PT. Maju Mundur Sejahtera</h5>
-                  <span class="text-muted">
-                    Ds. Abdullah No. 31, DKI Jakarta
-                  </span>
-                </div>
-                <div class="col-4">
-                  <h5>Available Position (Capacity)</h5>
-                  <span class="text-muted">
-                    Desain Grafis (3), Programmer (1), Manager (1)
-                  </span>
-                </div>
-                <div class="col-3">
-                  <div class="bg-success text-white p-2">
-                    Vacancies have been submitted
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <article class="spot">
-              <div class="row">
-                <div class="col-5">
-                  <h5 class="text-primary">PT. Maju Mundur Sejahtera</h5>
-                  <span class="text-muted">
-                    Ds. Abdullah No. 31, DKI Jakarta
-                  </span>
-                </div>
-                <div class="col-4">
-                  <h5>Available Position (Capacity)</h5>
-                  <span class="text-muted">
-                    Desain Grafis (3), Programmer (1), Manager (1)
-                  </span>
-                </div>
-                <div class="col-3">
-                  <button class="btn btn-danger btn-lg btn-block">
-                    Detail / Apply
-                  </button>
-                </div>
-              </div>
-            </article>
-            <article class="spot">
-              <div class="row">
-                <div class="col-5">
-                  <h5 class="text-primary">PT. Maju Mundur Sejahtera</h5>
-                  <span class="text-muted">
-                    Ds. Abdullah No. 31, DKI Jakarta
-                  </span>
-                </div>
-                <div class="col-4">
-                  <h5>Available Position (Capacity)</h5>
-                  <span class="text-muted">
-                    Desain Grafis (3), Programmer (1), Manager (1)
-                  </span>
-                </div>
-                <div class="col-3">
-                  <button class="btn btn-danger btn-lg btn-block">
-                    Detail / Apply
-                  </button>
-                </div>
-              </div>
-            </article>
-            <article class="spot">
-              <div class="row">
-                <div class="col-5">
-                  <h5 class="text-primary">PT. Maju Mundur Sejahtera</h5>
-                  <span class="text-muted">
-                    Ds. Abdullah No. 31, DKI Jakarta
-                  </span>
-                </div>
-                <div class="col-4">
-                  <h5>Available Position (Capacity)</h5>
-                  <span class="text-muted">
-                    Desain Grafis (3), Programmer (1), Manager (1)
-                  </span>
-                </div>
-                <div class="col-3">
-                  <button class="btn btn-danger btn-lg btn-block">
-                    Detail / Apply
-                  </button>
-                </div>
-              </div>
-            </article>
-            <article class="spot">
-              <div class="row">
-                <div class="col-5">
-                  <h5 class="text-primary">PT. Maju Mundur Sejahtera</h5>
-                  <span class="text-muted">
-                    Ds. Abdullah No. 31, DKI Jakarta
-                  </span>
-                </div>
-                <div class="col-4">
-                  <h5>Available Position (Capacity)</h5>
-                  <span class="text-muted">
-                    Desain Grafis (3), Programmer (1), Manager (1)
-                  </span>
-                </div>
-                <div class="col-3">
-                  <button class="btn btn-danger btn-lg btn-block">
-                    Detail / Apply
-                  </button>
-                </div>
-              </div>
-            </article>
+            {vacanciesData.length > 0
+              ? vacanciesData.map((vacancy, index) => (
+                  <article class="spot">
+                    <div class="row">
+                      <div class="col-5">
+                        <h5 class="text-primary">{vacancy?.company}</h5>
+                        <span class="text-muted">{vacancy?.address}</span>
+                      </div>
+                      <div class="col-4">
+                        <h5>
+                          Available Position (
+                          {vacancy.available_position.reduce(
+                            (accumulator, position) =>
+                              accumulator + position.capacity,
+                            0
+                          )}
+                          )
+                        </h5>
+                        <span class="text-muted">
+                          {vacancy.available_position.map((position, index) => (
+                            <span key={index}>
+                              {position.position} ({position.capacity})&nbsp;
+                            </span>
+                          ))}
+                        </span>
+                      </div>
+                      <div class="col-3">
+                        {society_id ? (
+                          <>
+                            <div
+                              class="bg-success text-white p-2 disabled"
+                              style={{ opacity: 0.5 }}
+                            >
+                              Vacancies have been submitted
+                            </div>
+                          </>
+                        ) : (
+                          <a
+                            href={`/job_vacancies/show/${vacancy?.id}`}
+                            className="btn btn-danger btn-lg btn-block"
+                          >
+                            Detail / Apply
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                ))
+              : "There's no vacancies data available"}
           </div>
         </div>
       </main>
@@ -153,4 +134,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

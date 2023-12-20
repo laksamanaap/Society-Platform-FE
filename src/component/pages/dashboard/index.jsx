@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { computeHeadingLevel } from "@testing-library/react";
 
 const Index = () => {
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const [validationData, setValidationData] = useState([]);
-  const [vacanciesData, setVacanciesData] = useState([]);
+  const [applicationData, setApplicationData] = useState([]);
 
   const [validationButton, setValidationButton] = useState(null);
 
   useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     const fetchData = async () => {
       try {
         // Fetch validation data
@@ -29,7 +36,7 @@ const Index = () => {
 
         // Fetch applying data
         const applyingResponse = await axios.get(
-          "http://127.0.0.1:8000/api/v1/job_vacancies", 
+          "http://127.0.0.1:8000/api/v1/applications",
           {
             params: {
               token: `${token}`,
@@ -37,20 +44,20 @@ const Index = () => {
           }
         );
 
-        const vacanciesDataArray = applyingResponse?.data?.vacancies;
-        setVacanciesData(vacanciesDataArray);
-        console.log(vacanciesDataArray);
+        console.log(applyingResponse.data.vacancies);
+        const applicationDataArray = applyingResponse.data.vacancies;
+        setApplicationData(applicationDataArray);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  }, [token]);
+  }, []);
 
   console.log(validationData);
   console.log(validationButton);
-  console.log(vacanciesData);
+  console.log(applicationData);
 
   return (
     <>
@@ -86,6 +93,7 @@ const Index = () => {
                   </div>
                 </div>
               ) : null}
+
               {validationData.length > 0
                 ? validationData.map((validation, index) => (
                     <div className="col-md-4" key={index}>
@@ -176,7 +184,7 @@ const Index = () => {
             </div>
             <div className="section-body">
               <div className="row mb-4">
-                {validationButton === "pending" ? (
+                {validationButton === "pending" || validationButton === null ? (
                   <div className="col-md-12">
                     <div className="alert alert-warning">
                       Your validation must be approved by validator to applying
@@ -185,21 +193,88 @@ const Index = () => {
                   </div>
                 ) : null}
 
-                {validationButton === "pending" ? null : (
+                {validationButton === "accepted"
+                  ? applicationData.length > 0 &&
+                    applicationData.map((application, index) => (
+                      <div class="col-md-6 mb-5" key={index}>
+                        <div class="card card-default">
+                          <div class="card-header border-0">
+                            <h5 class="mb-0">
+                              <a
+                                href={`/job_vacancies/show/${application?.id}`}
+                              >
+                                {application?.company}
+                              </a>
+                            </h5>
+                          </div>
+                          <div class="card-body p-0">
+                            <table class="table table-striped mb-0">
+                              <tr>
+                                <th>Address</th>
+                                <td class="text-muted">
+                                  {application?.address}
+                                </td>
+                              </tr>
+                              <tr>
+                                <th>Position</th>
+                                <td className="text-muted">
+                                  <ul>
+                                    {application?.position.length > 0 ? (
+                                      application?.position.map(
+                                        (job_position, index) => (
+                                          <li key={index}>
+                                            {job_position.position}&nbsp;
+                                            <span className="badge badge-info">
+                                              {job_position.apply_status}
+                                            </span>
+                                          </li>
+                                        )
+                                      )
+                                    ) : (
+                                      <li>-</li>
+                                    )}
+                                  </ul>
+                                </td>
+                              </tr>
+
+                              <tr>
+                                <th>Apply Date</th>
+                                <td class="text-muted">
+                                  {application?.apply_date}
+                                </td>
+                              </tr>
+                              <tr>
+                                <th>Notes</th>
+                                <td class="text-muted">{application?.notes}</td>
+                              </tr>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  : "No jobs application data available!"}
+                {/* 
+                {validationButton === "accepted" ? (
                   <div className="row gutter-5">
                     {vacanciesData.length > 0
                       ? vacanciesData.map((vacancy, index) => (
                           <div className="col-md-6 mb-5" key={index}>
                             <div className="card card-default">
                               <div className="card-header border-0">
-                                <h5 className="mb-0">{vacancy.company}</h5>
+                                <h5 className="mb-0">
+                                  <a
+                                    href={`/job_vacancies/show/${vacancy?.id}`}
+                                  >
+                                    {vacancy?.company}
+                                  </a>
+                                </h5>
                               </div>
                               <div className="card-body p-0">
                                 <table className="table table-striped mb-0">
                                   <tr>
                                     <th>Address</th>
                                     <td className="text-muted">
-                                      {vacancy.address}
+                                      {vacancy?.address}
                                     </td>
                                   </tr>
                                   <tr>
@@ -243,7 +318,9 @@ const Index = () => {
                         ))
                       : "No Data Available!"}
                   </div>
-                )}
+                ) : (
+                  "No Job Vacancies Data Available!"
+                )} */}
               </div>
             </div>
           </section>

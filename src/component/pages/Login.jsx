@@ -9,6 +9,7 @@ const Login = () => {
     id_card_number: "",
     password: "",
   });
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [userData, setUserData] = useState(null);
 
@@ -28,36 +29,36 @@ const Login = () => {
     try {
       const { idCardNumber, password } = formData;
 
-      const { data } = await axios.post(
-        "http://127.0.0.1:8000/api/v1/auth/login",
-        {
+      const { data } = await axios
+        .post("http://127.0.0.1:8000/api/v1/auth/login", {
           id_card_number: idCardNumber,
           password: password,
-        }
-      );
+        })
+        .then(({ data }) => {
+          console.log(data);
 
-      console.log(data);
+          // Set Society Name
+          localStorage.setItem("society_name", data?.name);
+          // Set Token
+          localStorage.setItem("token", data?.token);
+          setUserData(data);
+          setIsLoggedIn(true);
 
-      // Set Society Name
-      localStorage.setItem("society_name", data?.name);
-      // Set Token
-      localStorage.setItem("token", data?.token);
-      setUserData(data);
-      setIsLoggedIn(true);
+          // When success redirect to dashboard
+          navigate("/");
+        });
     } catch (error) {
       console.error("Error fetching login:", error);
+      setErrorMessage("ID Card Number or Password incorrect");
     }
   };
 
   const handleLogin = (e) => {
     e.preventDefault();
     if (formData.idCardNumber && formData.password) {
-      console.log("logged in");
       fetchLogin();
-      // When Login Success pushing in the dashboard
-      navigate("/");
     } else {
-      alert("ID Card Number and Password are required");
+      setErrorMessage("ID Card Number and Password are required");
     }
   };
 
@@ -85,6 +86,11 @@ const Login = () => {
                   <h4 className="mb-0">Login</h4>
                 </div>
                 <div className="card-body">
+                  {errorMessage && (
+                    <div className="alert alert-danger">
+                      Error: {errorMessage}
+                    </div>
+                  )}
                   <div className="form-group row align-items-center">
                     <div className="col-4 text-right">ID Card Number</div>
                     <div className="col-8">
