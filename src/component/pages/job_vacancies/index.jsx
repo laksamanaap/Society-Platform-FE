@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import client from "../../../utils/router";
 
 const Index = () => {
   const [vacanciesData, setVacanciesData] = useState([]);
@@ -9,25 +10,13 @@ const Index = () => {
 
   const token = localStorage.getItem("token");
   useEffect(() => {
-    // if (!token) {
-    //   navigate("/login");
-    //   return;
-    // }
     const fetchData = async () => {
       try {
         // Fetch applying data
-        const applyingResponse = await axios.get(
-          "http://127.0.0.1:8000/api/v1/job_vacancies",
-          {
-            params: {
-              token: `${token}`,
-            },
-          }
-        );
+        const applyingResponse = await client.get("/v1/job_vacancies");
 
         const vacanciesDataArray = applyingResponse?.data?.vacancies;
         setVacanciesData(vacanciesDataArray);
-        console.log(vacanciesDataArray);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -35,16 +24,11 @@ const Index = () => {
 
     const fetchSocietiesData = async () => {
       try {
-        const societiesResponse = await axios.get(
-          "http://127.0.0.1:8000/api/v1/applications",
-          {
-            params: {
-              token: `${token}`,
-            },
-          }
-        );
+        // Fetch societies response for handling applying jobs only can be once
+        const societiesResponse = await client.get("/v1/applications");
 
         const societiesResponseData = societiesResponse?.data?.vacancies;
+        console.log(societiesResponseData);
         setSociestiesData(societiesResponseData);
       } catch (error) {
         console.error(error);

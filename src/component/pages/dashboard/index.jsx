@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { computeHeadingLevel } from "@testing-library/react";
+import client from "../../../utils/router";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -19,14 +20,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         // Fetch validation data
-        const validationResponse = await axios.get(
-          "http://127.0.0.1:8000/api/v1/validations",
-          {
-            params: {
-              token: `${token}`,
-            },
-          }
-        );
+        const validationResponse = await client.get("/v1/validations");
         const validationDataArray = validationResponse.data.data;
         const validationDataArrayStatus =
           validationResponse.data.data[0]?.status ?? null;
@@ -35,14 +29,7 @@ const Index = () => {
         setValidationData(validationDataArray);
 
         // Fetch applying data
-        const applyingResponse = await axios.get(
-          "http://127.0.0.1:8000/api/v1/applications",
-          {
-            params: {
-              token: `${token}`,
-            },
-          }
-        );
+        const applyingResponse = await client.get("/v1/applications");
 
         console.log(applyingResponse.data.vacancies);
         const applicationDataArray = applyingResponse.data.vacancies;
@@ -54,6 +41,15 @@ const Index = () => {
 
     fetchData();
   }, []);
+
+  const formatApplyDate = (date) => {
+    const dateValue = new Date(date);
+    const month = new Intl.DateTimeFormat("id-ID", { month: "long" }).format(
+      dateValue
+    );
+    const dateValueFormatted = `${month} ${dateValue.getDate()}, ${dateValue.getFullYear()}`;
+    return dateValueFormatted;
+  };
 
   console.log(validationData);
   console.log(validationButton);
@@ -240,7 +236,7 @@ const Index = () => {
                               <tr>
                                 <th>Apply Date</th>
                                 <td class="text-muted">
-                                  {application?.apply_date}
+                                  {formatApplyDate(application?.apply_date)}
                                 </td>
                               </tr>
                               <tr>
@@ -253,74 +249,6 @@ const Index = () => {
                       </div>
                     ))
                   : "No jobs application data available!"}
-                {/* 
-                {validationButton === "accepted" ? (
-                  <div className="row gutter-5">
-                    {vacanciesData.length > 0
-                      ? vacanciesData.map((vacancy, index) => (
-                          <div className="col-md-6 mb-5" key={index}>
-                            <div className="card card-default">
-                              <div className="card-header border-0">
-                                <h5 className="mb-0">
-                                  <a
-                                    href={`/job_vacancies/show/${vacancy?.id}`}
-                                  >
-                                    {vacancy?.company}
-                                  </a>
-                                </h5>
-                              </div>
-                              <div className="card-body p-0">
-                                <table className="table table-striped mb-0">
-                                  <tr>
-                                    <th>Address</th>
-                                    <td className="text-muted">
-                                      {vacancy?.address}
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th>Position</th>
-                                    <td className="text-muted">
-                                      <ul>
-                                        {vacancy.available_position.length >
-                                        0 ? (
-                                          vacancy.available_position.map(
-                                            (position, i) => (
-                                              <li key={i}>
-                                                {position.position}{" "}
-                                                <span className="badge badge-info">
-                                                  Pending
-                                                </span>
-                                              </li>
-                                            )
-                                          )
-                                        ) : (
-                                          <li>-</li>
-                                        )}
-                                      </ul>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th>Apply Date</th>
-                                    <td className="text-muted">
-                                      September 12, 2023
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th>Notes</th>
-                                    <td className="text-muted">
-                                      {vacancy.description}
-                                    </td>
-                                  </tr>
-                                </table>
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                      : "No Data Available!"}
-                  </div>
-                ) : (
-                  "No Job Vacancies Data Available!"
-                )} */}
               </div>
             </div>
           </section>

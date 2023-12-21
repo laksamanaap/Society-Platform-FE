@@ -45,7 +45,7 @@ const Login = () => {
           setIsLoggedIn(true);
 
           // When success redirect to dashboard
-          navigate("/");
+          navigate("/dashboard");
         });
     } catch (error) {
       console.error("Error fetching login:", error);

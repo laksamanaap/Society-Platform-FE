@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import client from "../../../utils/router";
 
 function Show() {
   const navigate = useNavigate();
@@ -22,16 +23,11 @@ function Show() {
     const fetchData = async () => {
       try {
         // Fetch detail vacancies
-        const vacanciesDetailResponse = await axios.get(
-          `http://127.0.0.1:8000/api/v1/job_vacancies/${id}`,
-          {
-            params: {
-              token: `${token}`,
-            },
-          }
+        const vacanciesDetailResponse = await client.get(
+          `/v1/job_vacancies/${id}`
         );
 
-        // console.log(vacanciesDetailResponse?.data?.vacancy);
+        console.log(vacanciesDetailResponse?.data?.vacancy);
         const vacanciesDataArray = vacanciesDetailResponse?.data?.vacancy;
         setVacanciesData(vacanciesDataArray);
       } catch (error) {
@@ -46,27 +42,21 @@ function Show() {
     try {
       const { positions, notes, vacancy_id } = formData;
 
-      const { data } = axios.post(
-        "http://127.0.0.1:8000/api/v1/applications",
-        {
-          positions: positions,
-          vacancy_id: vacancy_id,
-          notes: notes,
-        },
-        {
-          params: {
-            token: `${token}`,
-          },
-        }
-      );
+      const payload = {
+        positions: positions,
+        vacancy_id: vacancy_id,
+        notes: notes,
+      };
 
-      console.log("Application Data : ", data);
+      client.post("/v1/applications", payload);
+
+      console.log("Application Data : ", payload);
       setSuccessMessage("Request job application successful");
       setTimeout(() => {
         navigate("/");
       }, 3000);
     } catch (error) {
-      setErrorMessage(error);
+      setErrorMessage("Error: Application for a job can only be once");
       console.error(error);
     }
   };
@@ -147,9 +137,7 @@ function Show() {
                 <div className="alert alert-success">{successMessage}</div>
               )}
               {errorMessage && (
-                <div className="alert alert-danger">
-                  Error: {errorMessage.message} ({errorMessage.code})
-                </div>
+                <div className="alert alert-danger"> {errorMessage}</div>
               )}
               <h3>Select position</h3>
               <table className="table table-bordered table-hover table-striped">

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import client from "../../../utils/router";
 
 function Index() {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ function Index() {
   });
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isExperience, setIsExperience] = useState("no");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -42,23 +44,17 @@ function Index() {
         validator_notes,
       } = formData;
 
-      const { data } = await axios.post(
-        "http://127.0.0.1:8000/api/v1/validations",
-        {
-          job_category_id: job_category_id,
-          job_position: job_position,
-          work_experience: work_experience,
-          reason_accepted: reason_accepted,
-          validator_id: validator_id,
-          status: status,
-          validator_notes: validator_notes,
-        },
-        {
-          params: {
-            token: `${token}`,
-          },
-        }
-      );
+      const payload = {
+        job_category_id: job_category_id,
+        job_position: job_position,
+        work_experience: work_experience,
+        reason_accepted: reason_accepted,
+        validator_id: validator_id,
+        status: status,
+        validator_notes: validator_notes,
+      };
+
+      client.post("/v1/validations", payload);
 
       setSuccessMessage("Request data validation successful");
       setTimeout(() => {
@@ -73,6 +69,16 @@ function Index() {
   const handleStore = (e) => {
     e.preventDefault();
     storeValidation();
+  };
+
+  const handleExperience = (e) => {
+    const { value } = e.target;
+    console.log(value);
+    if (value === "yes") {
+      setIsExperience("yes");
+    } else {
+      setIsExperience("no");
+    }
   };
 
   console.log(formData);
@@ -141,21 +147,37 @@ function Index() {
                 <div className="form-group">
                   <div className="d-flex align-items-center mb-3">
                     <label className="mr-3 mb-0">Work Experiences ?</label>
-                    <select className="form-control-sm">
+                    <select
+                      className="form-control-sm"
+                      onChange={handleExperience}
+                      value={isExperience}
+                    >
                       <option value="yes">Yes, I have</option>
                       <option value="no">No</option>
                     </select>
                   </div>
-                  <textarea
-                    className="form-control"
-                    cols="30"
-                    rows="5"
-                    placeholder="Describe your work experiences"
-                    name="work_experience"
-                    value={formData.work_experience}
-                    onChange={handleInputChange}
-                    required
-                  ></textarea>
+                  {isExperience === "yes" ? (
+                    <textarea
+                      className="form-control"
+                      cols="30"
+                      rows="5"
+                      placeholder="Describe your work experiences"
+                      name="work_experience"
+                      value={formData.work_experience}
+                      onChange={handleInputChange}
+                      required
+                    ></textarea>
+                  ) : (
+                    <textarea
+                      className="form-control disabled"
+                      cols="30"
+                      rows="5"
+                      placeholder="Describe your work experiences"
+                      name="work_experience"
+                      value={""}
+                      disabled
+                    ></textarea>
+                  )}
                 </div>
               </div>
 
