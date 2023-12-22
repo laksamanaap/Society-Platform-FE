@@ -48,15 +48,20 @@ function Show() {
         notes: notes,
       };
 
-      client.post("/v1/applications", payload);
-
-      console.log("Application Data : ", payload);
-      setSuccessMessage("Request job application successful");
-      setTimeout(() => {
-        navigate("/");
-      }, 3000);
+      client
+        .post("/v1/applications", payload)
+        .then(({ data }) => {
+          // console.log("Application Data : ", data);
+          setSuccessMessage("Request job application successful");
+          setTimeout(() => {
+            navigate("/");
+          }, 3000);
+        })
+        .catch((error) => {
+          setErrorMessage("Error: Application for a job can only be once");
+          console.error(error);
+        });
     } catch (error) {
-      setErrorMessage("Error: Application for a job can only be once");
       console.error(error);
     }
   };

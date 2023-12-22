@@ -36,11 +36,12 @@ const Login = () => {
         })
         .then(({ data }) => {
           console.log(data);
-
-          // Set Society Name
-          localStorage.setItem("society_name", data?.name);
           // Set Token
           localStorage.setItem("token", data?.token);
+          // Set Society Name
+          localStorage.setItem("society_name", data?.name);
+
+          // Set User DA
           setUserData(data);
           setIsLoggedIn(true);
 
